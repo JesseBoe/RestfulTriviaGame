@@ -1,0 +1,79 @@
+body{
+    background-image: url("../images/BG.jpg");
+    background-size: 100%;
+}
+.container{
+    margin-top: 40px;
+    background: rgba(14, 19, 22, 0.664); 
+}
+#headerText{
+    font-size: 64px;
+    font-weight: bold;
+}
+#questionText{
+    text-align: center;
+    font-size: 42px;
+    font-weight: bold;
+    margin-top: 42px;
+    height: 180px;
+}
+#topAnswers{    
+    margin-top: 6%;
+}
+#bottomAnswers{
+    margin-top:32px;
+}
+#sizeAdjust{
+    margin-top: 40px;
+}
+#timeRemaining{
+    margin-top: 16px;
+    font-size:28px;
+}
+span{
+    color: whitesmoke;
+}
+.answers{
+    font-size: 28px;
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    top:25%;
+}
+img{
+    width: 90%;
+}
+.welcomeText{
+    margin-top: 64px;
+    font-size: 64px;
+    font-weight: bold;
+}
+#wasCorrect{
+    font-weight: bold;
+    margin-top: 64px;
+    font-size: 64px;
+}
+#correct, #incorrect, #noGuess{
+    margin-top: 64px;
+    font-size: 32px;
+}
+#noGuess{
+    padding-bottom: 32px;
+}
+
+@media only screen and (max-width: 1480px) 
+{
+    #headerText{
+        font-size: 48px;
+    }
+
+    #questionText{
+        font-size: 32px;
+    }
+}
+@media only screen and (max-width: 768px) 
+{
+    #bottomAnswers{
+        margin-top:0px;
+    }
+}
