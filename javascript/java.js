@@ -1,4 +1,4 @@
-var queryUrl = 'https://opentdb.com/api.php?amount=3&category=';
+var queryUrl = 'https://opentdb.com/api.php?amount=20&category=';
 var triviaArray;
 var timerId;
 var currentQuestion = 0;
@@ -7,6 +7,7 @@ var correctAnswer;
 var chosenAnswer;
 var timeRemaining;
 
+var subjectChosen = false;
 var right = 0;
 var wrong = 0;
 var timeouts = 0;
@@ -17,7 +18,6 @@ $('.result').hide();
 $('.main').hide();
 
 function newQuestion() {
-	
 	$('.main').show();
 	$('.result').hide();
 	$('#resetButton').hide();
@@ -28,15 +28,12 @@ function newQuestion() {
 	wasRight = false;
 	timedOut = false;
 
-	
-    $('#questionText').text(htmlDecode(triviaArray[currentQuestion].question));
-    if (triviaArray[currentQuestion].type == 'multiple') 
-    {
+	$('#questionText').text(htmlDecode(triviaArray[currentQuestion].question));
+	if (triviaArray[currentQuestion].type == 'multiple') {
 		$('#bottomAnswers').show();
 		var randPlace = Math.floor(Math.random() * 4);
 		var count = 1;
-        for (let i = 0; i < 4; i++) 
-        {
+		for (let i = 0; i < 4; i++) {
 			if (randPlace == i) {
 				$('#' + count).text(htmlDecode(triviaArray[currentQuestion].correct_answer));
 				correctAnswer = count;
@@ -45,63 +42,63 @@ function newQuestion() {
 			}
 			count++;
 		}
-    }
-    if (triviaArray[currentQuestion].type == 'boolean') 
-    {
-        $('#1').text('True');
+	}
+	if (triviaArray[currentQuestion].type == 'boolean') {
+		$('#1').text('True');
 		$('#2').text('False');
-		if(triviaArray[currentQuestion].correct_answer == "True"){
+		if (triviaArray[currentQuestion].correct_answer == 'True') {
 			correctAnswer = 1;
-		}
-		else {
+		} else {
 			correctAnswer = 2;
-		} 
+		}
 		$('#3').text('');
 		$('#4').text('');
-		$('#bottomAnswers').hide();		
-    }
+		$('#bottomAnswers').hide();
+	}
 }
 
 $('.answers').on('click', function() {
 	var chosenAnswer = $(this);
-	if ( chosenAnswer[0].id == correctAnswer ) {
+	if (chosenAnswer[0].id == correctAnswer) {
 		//Correct
 		right++;
 		wasRight = true;
 		showResult();
-	}
-	else {
+	} else {
 		//Wrong
-		wrong ++;
+		wrong++;
 		wasRight = false;
 		showResult();
 	}
 });
 
-$('.chooseSubject').on('click', function(){
-	queryUrl += $(this).attr("value");
+$('.chooseSubject').on('click', function() {
+	if (!subjectChosen) {
+		subjectChosen = true;
+		queryUrl += $(this).attr('value');
 
-	$.ajax({
-		url: queryUrl,
-		method: 'GET'
-	}).then(function(response) {
-		triviaArray = response.results;
-		$('.start').hide();
-		newQuestion();
-		//Cheat sheet
-		// console.log(triviaArray);
-	});
-})
+		$.ajax({
+			url: queryUrl,
+			method: 'GET'
+		}).then(function(response) {
+			triviaArray = response.results;
+			$('.start').hide();
+			newQuestion();
+			//Cheat sheet
+			// console.log(triviaArray);
+		});
+	}
+});
 
-$('#resetButton').on('click', function(){
+$('#resetButton').on('click', function() {
 	$('#resetButton').hide();
 	reset();
-})
+});
 
-function countDown(){
+function countDown() {
 	timeRemaining--;
-	$('#timeRemaining').text("Time Remaining: " + timeRemaining);
-	if ( timeRemaining == 0 ) {
+	$('#timeRemaining').text('Time Remaining: ' + timeRemaining);
+	if (timeRemaining == 0) {
 		clearInterval(timerId);
 		timeouts++;
 		timedOut = true;
@@ -109,23 +106,24 @@ function countDown(){
 	}
 }
 
-function reset(){
+function reset() {
 	clearTimeout(timerId);
 	$('.result').hide();
 	$('.main').hide();
 	$('.start').show();
 
-	queryUrl = 'https://opentdb.com/api.php?amount=3&category=';
+	queryUrl = 'https://opentdb.com/api.php?amount=20&category=';
 	currentQuestion = 0;
 	right = 0;
 	wrong = 0;
 	timeouts = 0;
+	subjectChosen = false;
 	triviaArray = [];
-	$('#correct').text("Correct: " + right);
-	$('#incorrect').text("Incorrect: " + wrong);
-	$('#noGuess').text("Time outs: " + timeouts);
-	$('#correctAnswer').text("");
-	$('#questionText').text("");
+	$('#correct').text('Correct: ' + right);
+	$('#incorrect').text('Incorrect: ' + wrong);
+	$('#noGuess').text('Time outs: ' + timeouts);
+	$('#correctAnswer').text('');
+	$('#questionText').text('');
 }
 
 function showResult() {
@@ -136,28 +134,25 @@ function showResult() {
 	$('#timeRemaining').text('Time Remaining: 30');
 
 	if (timedOut) {
-		$('#wasCorrect').text("Timed Out!");
-		$('#correctAnswer').text("");
-	}
-	else if (wasRight) {
-		$('#wasCorrect').text("Correct!");
-		$('#correctAnswer').text("");
-	}
-	else {
-		$('#wasCorrect').text("Incorrect");
+		$('#wasCorrect').text('Timed Out!');
+		$('#correctAnswer').text('');
+	} else if (wasRight) {
+		$('#wasCorrect').text('Correct!');
+		$('#correctAnswer').text('');
+	} else {
+		$('#wasCorrect').text('Incorrect');
 		$('#correctAnswer').text('The correct answer was: ' + htmlDecode(triviaArray[currentQuestion].correct_answer));
 	}
 
-	$('#correct').text("Correct: " + right);
-	$('#incorrect').text("Incorrect: " + wrong);
-	$('#noGuess').text("Time outs: " + timeouts);
+	$('#correct').text('Correct: ' + right);
+	$('#incorrect').text('Incorrect: ' + wrong);
+	$('#noGuess').text('Time outs: ' + timeouts);
 
 	currentQuestion++;
 	if (currentQuestion >= triviaArray.length) {
 		//Game ends.
 		$('#resetButton').show();
-	}
-	else {
+	} else {
 		//Next question
 		timerId = setTimeout(newQuestion, 3000);
 	}
@@ -165,5 +160,5 @@ function showResult() {
 
 // From what I read this is the cleanest way to do this.
 function htmlDecode(value) {
-	return $("<textarea/>").html(value).text();
-  }
+	return $('<textarea/>').html(value).text();
+}
